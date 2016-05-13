@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="build-lib/annotations.jar"/>
+	<classpathentry kind="lib" path="build-lib/ant-contrib.jar"/>
+	<classpathentry kind="lib" path="build-lib/ant-jmeter.jar"/>
+	<classpathentry kind="lib" path="build-lib/ant-junit.jar"/>
+	<classpathentry kind="lib" path="build-lib/ant.jar"/>
+	<classpathentry kind="lib" path="build-lib/asm-3.1.jar"/>
+	<classpathentry kind="lib" path="build-lib/asm-analysis-3.1.jar"/>
+	<classpathentry kind="lib" path="build-lib/asm-commons-3.1.jar"/>
+	<classpathentry kind="lib" path="build-lib/asm-tree-3.1.jar"/>
+	<classpathentry kind="lib" path="build-lib/asm-util-3.1.jar"/>
+	<classpathentry kind="lib" path="build-lib/asm-xml-3.1.jar"/>
+	<classpathentry kind="lib" path="build-lib/atg-ant.jar"/>
+	<classpathentry kind="lib" path="build-lib/bcel.jar"/>
+	<classpathentry kind="lib" path="build-lib/checkstyle-all-4.4.jar"/>
+	<classpathentry kind="lib" path="build-lib/commons-beanutils-1.7.jar"/>
+	<classpathentry kind="lib" path="build-lib/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="build-lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="build-lib/findbugs-ant.jar"/>
+	<classpathentry kind="lib" path="build-lib/findbugs.jar"/>
+	<classpathentry kind="lib" path="build-lib/jaxen-1.1.1.jar"/>
+	<classpathentry kind="lib" path="build-lib/jdepend-2.9.jar"/>
+	<classpathentry kind="lib" path="build-lib/jFormatString.jar"/>
+	<classpathentry kind="lib" path="build-lib/jsr305.jar"/>
+	<classpathentry kind="lib" path="build-lib/junitee-anttask.jar"/>
+	<classpathentry kind="lib" path="build-lib/junitee.jar"/>
+	<classpathentry kind="lib" path="build-lib/pmd-4.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ATG"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

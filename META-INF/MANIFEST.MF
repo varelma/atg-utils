@@ -1,0 +1,8 @@
+Bundle-Name: atgutil
+Bundle-SymbolicName: atgutil
+Bundle-Version: 1.0.0.qualifier
+ATG-Product: SPARKRED.atgutil
+ATG-Required: DAF DAS DAS-UI DSS DCS 
+ATG-Class-Path:  classes lib/servlet-api.jar lib/commons-beanutils-1.7.jar
+ATG-Config-Path: config
+

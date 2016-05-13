@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="atgel" default="build-module" basedir="../">
+	<property environment="env" />
+	<property name="global.dir" value="." />
+
+	<echo message="#############################################################################" />
+	<echo message="about to load build-scripts/${user.name}.properties" />
+	<property file="build-scripts/${user.name}.properties" />
+
+	<echo message="#############################################################################" />
+	<echo message="about to load build-scripts/build.properties" />
+	<property file="build-scripts/build.properties" />
+
+
+
+
+
+	<!-- Define an if and else task for use in this definition -->
+	<taskdef name="if" classname="ise.antelope.tasks.IfTask" classpath="${basedir}/build-lib/atg-ant.jar" />
+	<taskdef name="else" classname="ise.antelope.tasks.ElseTask" classpath="${basedir}/build-lib/atg-ant.jar" />
+
+	<!-- The classpath for the project. -->
+	<path id="lib.classpath">
+		<fileset dir="lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!-- The classpath for build libraries this contains ant extenstion, classes that are provided my server that  -->
+	<path id="buildlib.classpath">
+		<fileset dir="build-lib/">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+
+	<!-- The dynamo class path -->
+	<path id="dynamo.classpath">
+		<fileset dir="${dynamo.home}/../DAS/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	 	<fileset dir="${dynamo.home}/../DAS-UI/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${dynamo.home}/../DPS/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${dynamo.home}/../DSS/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${dynamo.home}/../DCS/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Other things to watch for in the classpath -->
+	<patternset id="resource.files">
+		<include name="**/*.properties" />
+		<include name="**/*.xml" />
+		<include name="**/*.dtd" />
+	</patternset>
+
+	<!-- Deletes the build directories. -->
+	<target name="clean" depends="init" description="Deletes the contents of the build directories, remove tmp, logs work.">
+		<echo message="Deleting:" />
+		<delete failonerror="false" includeEmptyDirs="true">
+			<fileset dir="build" />
+			<fileset dir="${install.dir}" />
+		</delete>
+	</target>
+
+	<!-- Deletes the install directories. -->
+	<target name="undeploy" depends="init" description="Deletes the contents of the install directories.">
+		<echo message="Deleting:" />
+		<echo message="  ${jboss.home}/server/${jboss.server}/deploy/${module.name}.ear" />
+		<echo message="  ${install.dir}" />
+		<delete failonerror="false" includeEmptyDirs="true">
+			<fileset dir="${jboss.home}/server/${jboss.server}/deploy/${module.name}.ear" />
+			<fileset file="${jboss.home}/server/${jboss.server}/deploy/${module.name}.ear" />
+			<fileset dir="${install.dir}" />
+		</delete>
+	</target>
+
+	<!-- Creates the javadocs for the project.  This is an expensive operation. -->
+	<target name="javadoc" depends="init,createdirs" description="Builds the javadoc.">
+		<javadoc destdir="javadoc" author="true" version="true" use="true">
+			<packageset dir="src" defaultexcludes="yes">
+				<include name="**" />
+			</packageset>
+			<classpath path="${classpath}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="dynamo.classpath" />
+			<link offline="true" href="http://download.oracle.com/docs/cd/E17409_01/javase/6/docs/api/" packagelistLoc="${jdk.docs.dir}" />
+			<link offline="true" href="http://www.atg.com/repositories/ContentCatalogRepository_en/manuals/ATG9.1/apidoc/" packagelistLoc="${dynamo.docs.dir}" />
+		</javadoc>
+	</target>
+
+ <!-- This target builds the ATG module. -->
+	<target name="build-module" depends="init, compile, -jar" description="">
+
+		<echo message="Building module at ${install.dir}." />
+		<mkdir dir="${install.dir}/META-INF" />
+		<copy todir="${install.dir}/META-INF" file="META-INF/MANIFEST.MF" />
+
+		<mkdir dir="${install.dir}/lib" />
+		<copy todir="${install.dir}/lib">
+			<fileset dir="lib" />
+		</copy>
+
+		<mkdir dir="${install.dir}/classes" />
+		<copy todir="${install.dir}/classes">
+			<fileset dir="build/classes" />
+		</copy>
+
+		<mkdir dir="${install.dir}/config" />
+		<copy todir="${install.dir}/config">
+			<fileset dir="build/config" />
+		</copy>
+
+		<mkdir dir="${install.dir}/j2ee-apps" />
+		<copy todir="${install.dir}/j2ee-apps">
+			<fileset dir="j2ee-apps" />
+		</copy>
+
+		<echo message="Module built." />
+	</target>
+
+
+
+	<!-- Compiles the codebase -->
+	<target name="compile" depends="init,createdirs" description="Compiles the source code to the classes directory.">
+		<mkdir dir="classes" />
+
+		<javac srcdir="src" destdir="classes" debug="true" deprecation="false" optimize="false" source="1.7" target="1.7" verbose="${javac.verbose.bool}">
+			<classpath path="${classpath}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="dynamo.classpath" />
+			<include name="**/*.java" />
+		</javac>
+		<!-- copy java resource files to build directory -->
+		<copy todir="classes">
+			<fileset dir="src/">
+				<patternset refid="resource.files" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Jars the classes and config files, and copies the associated lib files. -->
+	<target name="-jarclasses" depends="createdirs" description="jars classes and source to build directory.">
+		<if name="jar.configs.and.classes" value="true">
+			<echo message="Jarring up class files" />
+			<!-- Jar up the classes files -->
+			<jar jarfile="build/classes/classes.jar" basedir="classes/" includes="**" />
+			<else>
+				<!-- Not supposed to jar up the class files just copy them to a directory with the name classes.jar -->
+				<echo message="Using exploded class files" />
+				<mkdir dir="build/classes/classes.jar" />
+				<copy todir="build/classes/classes.jar">
+					<fileset dir="classes" />
+				</copy>
+			</else>
+		</if>
+
+	</target>
+
+	<!-- Jars the classes and config files, and copies the associated lib files. -->
+	<target name="-jarconfig" depends="createdirs" description="jars config files to build directory.">
+		<if name="jar.configs.and.classes" value="true">
+			<echo message="Jarring up config files" />
+			<!-- Jar up the config files -->
+			<jar jarfile="build/config/config.jar" basedir="config/" includes="**" />
+			<else>
+				<!-- Not supposed to jar up the config files just copy them to a directory with the name config.jar -->
+				<echo message="Using exploded config files" />
+				<mkdir dir="build/config/config.jar" />
+				<copy todir="build/config/config.jar">
+					<fileset dir="config" />
+				</copy>
+			</else>
+		</if>
+	</target>
+
+	<target name="-jar" depends="createdirs,-jarclasses,-jarconfig" description="creates build directories, jars classes and configuration">
+	</target>
+
+
+	<target name="create-static-jar" description="This will create a jar file for deployment to the web server so the images, js, and css files can be served from there">
+		<jar destfile="${deploy_directory}/static.jar" basedir="j2ee-apps/${module.name}/${module.name}.war" includes="css/**, js/**, images/**" />
+	</target>
+
+	<!-- Create the directories used in the build process. Not intended to be used publically. -->
+	<target name="createdirs">
+		<mkdir dir="build" />
+		<mkdir dir="build/config" />
+		<mkdir dir="build/classes" />
+		<mkdir dir="javadoc" />
+	</target>
+
+	<!-- Initializes the build.  This target is not public, but should be called by all the others.	-->
+	<target name="init">
+		<!-- Create the timestamp -->
+		<tstamp />
+		<echo message="" />
+		<echo message="" />
+		<echo message="#############################################################################" />
+		<echo message="#############################################################################" />
+		<echo message="${module.name}: start date = ${DSTAMP}  start time = ${TSTAMP}" />
+		<echo message="JAVA_HOME       = ${env.JAVA_HOME}" />
+		<echo message="dynamo.home     = ${dynamo.home}" />
+		<echo message="dynamo.root.dir = ${dynamo.root.dir}" />
+		<echo message="#############################################################################" />
+		<echo message="#############################################################################" />
+		<echo message="" />
+		<echo message="" />
+	</target>
+
+
+	<target name="report" depends="checkstyle, pmd, cpd, findbugs" />
+
+
+
+	<!-- Generates a Checkstyle report -->
+	<target name="checkstyle">
+		<mkdir dir="gen/reports/checkstyle" />
+		<taskdef  resource="checkstyletask.properties"  classpath="build-lib/checkstyle-all-4.4.jar" />
+		<checkstyle config="build-scripts/atg-checks.xml" failonviolation="false">
+			<classpath path="${classpath}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="dynamo.classpath" />
+			<fileset dir="src">
+				<include name="**/*.java" />
+			</fileset>
+			<formatter type="xml" toFile="gen/reports/checkstyle/checkstyle_report.xml" />
+		</checkstyle>
+		<xslt in="gen/reports/checkstyle/checkstyle_report.xml" out="gen/reports/checkstyle/checkstyle_report.html" style="build-scripts/checkstyle-noframes-sorted.xsl"/>
+
+	</target>
+
+	<target name="pmd">
+		<mkdir dir="gen/reports/pmd" />
+		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="buildlib.classpath" />
+		<pmd targetjdk="1.6">
+			<ruleset>basic</ruleset>
+			<formatter type="html" toFile="gen/reports/pmd/pmd_report.html" />
+			<formatter type="xml" toFile="gen/reports/pmd/pmd_report.xml" />
+			<fileset dir="src">
+				<include name="**/*.java" />
+			</fileset>
+		</pmd>
+	</target>
+
+	<target name="cpd">
+		<mkdir dir="gen/reports/cpd" />
+		<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="buildlib.classpath"/>
+		<cpd minimumTokenCount="50" format="xml" outputFile="gen/reports/cpd/cpd.xml">
+			<fileset dir="src">
+				<include name="**/*.java" />
+			</fileset>
+		</cpd>
+  		<xslt in="gen/reports/cpd/cpd.xml" out="gen/reports/cpd/cpd.html" style="build-scripts/cpdhtml.xslt"/>
+	</target>
+
+	<target name="findbugs">
+		<mkdir dir="gen/reports/findbugs" />
+		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="buildlib.classpath" />
+		<findbugs home="${basedir}/build-lib" output="html" outputFile="gen/reports/findbugs/findbugs.html">
+			<auxClasspath refid="dynamo.classpath" />
+			<auxClasspath refid="lib.classpath" />
+			<auxClasspath refid="buildlib.classpath" />
+			<sourcePath path="src" />
+			<class location="classes" />
+		</findbugs>
+	</target>
+
+</project>

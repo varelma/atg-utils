@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE gsa-template PUBLIC "-//Art Technology Group, Inc.//DTD General SQL Adapter//EN"
+    "http://www.atg.com/dtds/gsa/gsa_1.0.dtd">
+<gsa-template>
+	<header>
+		<name>I18n Repository</name>
+		<author>Jon Pallas</author>
+		<version>1.0</version>
+		<description>This is just a sample i18n repository</description>
+	</header>
+	<item-descriptor name="translation" id-space-name="key">
+		<property name="key" data-type="string" />
+		<property name="value" />
+	</item-descriptor>
+	<add-item item-descriptor="translation" id="hello_en">
+		<set-property name="value"><![CDATA[hello]]></set-property>
+	</add-item>
+	<add-item item-descriptor="translation" id="hello_fi">
+		<set-property name="value"><![CDATA[moi]]></set-property>
+	</add-item>
+	
+</gsa-template>

@@ -1,0 +1,15 @@
+-jar
+-jarclasses
+-jarconfig
+[echo]
+build-module
+build-modules
+clean
+compile
+create-static-jar
+deploy-ear-to-jboss
+dev-deploy-wars
+execute-assembler-cmd
+javadoc
+standalone
+undeploy
