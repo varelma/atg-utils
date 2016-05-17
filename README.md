@@ -61,9 +61,24 @@ jobName=MyService
 jobDescription=This service to do MyService
 ```
 
+
+Additional ATG related 
+
+For and implimantation of Java Generics in ATG see.
+
+[https://github.com/varelma/atg-generics](https://github.com/varelma/atg-generics)
+
 Also see the atgel project for a high performance expresion language implementation for ATG https://github.com/sparkred-insight/atgel
 
-feedback to jon@varelma.com
+[https://github.com/sparkred-insight/atgel](https://github.com/sparkred-insight/atgel)
+
+Feedback to jon@varelma.com
+
+![Varelma](https://raw.githubusercontent.com/varelma/atg-generics/master/varelma-small.png "Varelma")
+
+
+
+
 
 
 
